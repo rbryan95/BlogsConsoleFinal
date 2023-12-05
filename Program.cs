@@ -119,14 +119,18 @@ static Blog InputBlog(BloggingContext db, Logger logger)
     var isValid = Validator.TryValidateObject(blog, context, results, true);
     if (isValid)
     {
-        return blog;
-    }
-    else
-    {
-        foreach (var result in results)
-        {
-            logger.Error($"{result.MemberNames.First()} : {result.ErrorMessage}");
+        // prevent duplicate blog names
+        if (db.Blogs.Any(b => b.Name == blog.Name)) {
+            // generate error
+             results.Add(new ValidationResult("Blog name exists", new string[] { "Name" }));
+        } else {
+            return blog;
         }
     }
+    foreach (var result in results)
+    {
+        logger.Error($"{result.MemberNames.First()} : {result.ErrorMessage}");
+    }
+
     return null;
 }
