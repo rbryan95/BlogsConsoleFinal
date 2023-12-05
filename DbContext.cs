@@ -20,6 +20,6 @@ public class BloggingContext : DbContext
         // *******************************************************************
         // ## last 2 digits of CRN
         // XXX your initials
-        optionsBuilder.UseSqlServer(@"Server=bitsql.wctc.edu;Database=BlogsConsole_22_BRY;User ID=BRY;Password=000576913");
+        optionsBuilder.UseSqlServer(@"Server=bitsql.wctc.edu;Database=BlogsConsole_22_BRY;User ID=brosado1;Password=000576913");
     }
 }
