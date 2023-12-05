@@ -1,4 +1,4 @@
-﻿using NLog;
+﻿﻿using NLog;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
 
@@ -78,7 +78,8 @@ try
             var blog = GetBlog(db, logger);
             if (blog != null)
             {
-                // TODO: delete blog
+                // delete blog
+                db.DeleteBlog(blog);
                 logger.Info($"Blog (id: {blog.BlogId}) deleted");
             }
         }
