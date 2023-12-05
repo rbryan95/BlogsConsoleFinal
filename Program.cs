@@ -1,4 +1,4 @@
-﻿﻿using NLog;
+﻿using NLog;
 using System.Linq;
 using System.ComponentModel.DataAnnotations;
 
@@ -75,6 +75,12 @@ try
         {
             // delete blog
             Console.WriteLine("Choose the blog to delete:");
+            var blog = GetBlog(db, logger);
+            if (blog != null)
+            {
+                // TODO: delete blog
+                logger.Info($"Blog (id: {blog.BlogId}) deleted");
+            }
         }
         Console.WriteLine();
     } while (choice.ToLower() != "q");
@@ -85,3 +91,23 @@ catch (Exception ex)
 }
 
 logger.Info("Program ended");
+
+static Blog GetBlog(BloggingContext db, Logger logger)
+{
+    // display all blogs
+    var blogs = db.Blogs.OrderBy(b => b.BlogId);
+    foreach (Blog b in blogs)
+    {
+        Console.WriteLine($"{b.BlogId}: {b.Name}");
+    }
+    if (int.TryParse(Console.ReadLine(), out int BlogId))
+    {
+        Blog blog = db.Blogs.FirstOrDefault(b => b.BlogId == BlogId);
+        if (blog != null)
+        {
+            return blog;
+        }
+    }
+    logger.Error("Invalid Blog Id");
+    return null;
+}
