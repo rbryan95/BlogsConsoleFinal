@@ -40,36 +40,12 @@ try
         else if (choice == "2")
         {
             // Add blog
-            Console.Write("Enter a name for a new Blog: ");
-            var blog = new Blog { Name = Console.ReadLine() };
-
-            ValidationContext context = new ValidationContext(blog, null, null);
-            List<ValidationResult> results = new List<ValidationResult>();
-
-            var isValid = Validator.TryValidateObject(blog, context, results, true);
-            if (isValid)
+            Blog blog = InputBlog(db, logger);
+            if (blog != null)
             {
-                // check for unique name
-                if (db.Blogs.Any(b => b.Name == blog.Name))
-                {
-                    // generate validation error
-                    isValid = false;
-                    results.Add(new ValidationResult("Blog name exists", new string[] { "Name" }));
-                }
-                else
-                {
-                    logger.Info("Validation passed");
-                    // save blog to db
-                    db.AddBlog(blog);
-                    logger.Info("Blog added - {name}", blog.Name);
-                }
-            }
-            if (!isValid)
-            {
-                foreach (var result in results)
-                {
-                    logger.Error($"{result.MemberNames.First()} : {result.ErrorMessage}");
-                }
+                //blog.BlogId = BlogId;
+                db.AddBlog(blog);
+                logger.Info("Blog added - {name}", blog.Name);
             }
         }
         else if (choice == "5")
@@ -121,5 +97,29 @@ static Blog GetBlog(BloggingContext db, Logger logger)
         }
     }
     logger.Error("Invalid Blog Id");
+    return null;
+}
+
+static Blog InputBlog(BloggingContext db, Logger logger)
+{
+    Blog blog = new Blog();
+    Console.WriteLine("Enter the Blog name");
+    blog.Name = Console.ReadLine();
+
+    ValidationContext context = new ValidationContext(blog, null, null);
+    List<ValidationResult> results = new List<ValidationResult>();
+
+    var isValid = Validator.TryValidateObject(blog, context, results, true);
+    if (isValid)
+    {
+        return blog;
+    }
+    else
+    {
+        foreach (var result in results)
+        {
+            logger.Error($"{result.MemberNames.First()} : {result.ErrorMessage}");
+        }
+    }
     return null;
 }
